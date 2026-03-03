@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trắc nghiệm Văn Lang – Âu Lạc</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f0f4ff;--surface:#fff;--surface2:#f5f7ff;--border:#e2e8f0;--text:#1e293b;--text2:#64748b;--accent:#4f46e5;--accent2:#7c3aed;--accent-light:#ede9fe;--correct:#16a34a;--correct-bg:#dcfce7;--wrong:#dc2626;--wrong-bg:#fee2e2;--sh:0 4px 24px rgba(79,70,229,.10);--sh2:0 2px 8px rgba(0,0,0,.07);--ov:rgba(0,0,0,.38);}
+[data-theme="dark"]{--bg:#0f0f1a;--surface:#1a1a2e;--surface2:#16213e;--border:#2d2d4e;--text:#e2e8f0;--text2:#94a3b8;--accent:#818cf8;--accent2:#a78bfa;--accent-light:#1e1b4b;--correct:#4ade80;--correct-bg:#052e16;--wrong:#f87171;--wrong-bg:#450a0a;--sh:0 4px 24px rgba(0,0,0,.4);--sh2:0 2px 8px rgba(0,0,0,.3);--ov:rgba(0,0,0,.6);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);min-height:100vh;color:var(--text);transition:background .3s,color .3s;}
+body::before{content:'';position:fixed;top:-200px;right:-200px;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(79,70,229,.12),transparent 70%);pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;bottom:-150px;left:-150px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.10),transparent 70%);pointer-events:none;z-index:0;}
+.topbar{position:fixed;top:0;left:0;right:0;height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:100;box-shadow:var(--sh2);}
+.topbar-title{font-size:.93em;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.topbar-right{display:flex;align-items:center;gap:8px;}
+.icon-btn{width:36px;height:36px;border-radius:10px;border:none;background:var(--surface2);color:var(--text);font-size:1.05em;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s;}
+.icon-btn:hover{background:var(--accent-light);transform:scale(1.07);}
+.main{max-width:700px;margin:0 auto;padding:74px 16px 130px;position:relative;z-index:1;}
+.quiz-header{text-align:center;margin-bottom:20px;animation:fadeUp .5s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.quiz-header h1{font-size:1.65em;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;}
+.quiz-header p{color:var(--text2);font-size:.88em;}
+.stats-row{display:flex;gap:10px;margin-bottom:14px;}
+.stat-card{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:11px 14px;box-shadow:var(--sh2);}
+.stat-card label{font-size:.7em;color:var(--text2);font-weight:600;letter-spacing:.4px;text-transform:uppercase;}
+.stat-card .val{font-size:1.4em;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.progress-wrap{margin-bottom:16px;}
+.progress-bar{height:6px;background:var(--border);border-radius:99px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:var(--sh);margin-bottom:12px;animation:slideIn .35s cubic-bezier(.4,0,.2,1);}
+@keyframes slideIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:translateX(0)}}
+.q-label{font-size:.73em;font-weight:700;letter-spacing:.4px;color:var(--accent);text-transform:uppercase;margin-bottom:7px;}
+.q-text{font-size:1.08em;font-weight:600;color:var(--text);line-height:1.55;}
+.options{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.option{background:var(--surface2);border:2px solid var(--border);border-radius:11px;padding:12px 14px;cursor:pointer;font-size:.95em;font-weight:500;display:flex;align-items:center;gap:10px;transition:all .22s;color:var(--text);}
+.option:hover:not(.correct):not(.wrong):not(.disabled){border-color:var(--accent);transform:translateX(4px);box-shadow:0 2px 10px rgba(79,70,229,.15);}
+.opt-letter{min-width:27px;height:27px;border-radius:7px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:700;font-size:.83em;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.option.correct{border-color:var(--correct);background:var(--correct-bg);animation:cPop .4s ease;}
+.option.correct .opt-letter{background:var(--correct);}
+@keyframes cPop{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
+.option.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.55;cursor:not-allowed;animation:wShake .4s ease;}
+.option.wrong .opt-letter{background:var(--wrong);}
+@keyframes wShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.option.disabled{cursor:not-allowed;}
+.nav-row{display:flex;gap:10px;}
+.nav-btn{flex:1;padding:12px;border:none;border-radius:11px;font-size:.95em;font-weight:700;cursor:pointer;transition:all .22s;font-family:inherit;}
+.nav-btn.prev{background:var(--surface2);border:1px solid var(--border);color:var(--text2);}
+.nav-btn.prev:hover:not(:disabled){background:var(--border);color:var(--text);}
+.nav-btn.next{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;}
+.nav-btn.next:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 5px 16px rgba(79,70,229,.35);}
+.nav-btn:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
+.fullscreen-btn{position:fixed;bottom:96px;left:18px;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;font-size:.95em;cursor:pointer;box-shadow:0 4px 12px rgba(79,70,229,.4);z-index:200;display:flex;align-items:center;justify-content:center;transition:transform .2s;}
+.fullscreen-btn:hover{transform:scale(1.1);}
+.result-screen{text-align:center;animation:fadeUp .5s ease;}
+.trophy-anim{font-size:4em;animation:tBounce 1.5s ease infinite;display:block;margin:6px 0 14px;}
+@keyframes tBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.result-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:var(--sh);margin:14px 0;}
+.result-grid{display:grid;gap:7px;}
+.result-item{background:var(--surface2);border-radius:9px;padding:11px 14px;display:flex;align-items:center;gap:8px;font-size:.93em;}
+.result-item span:last-child{font-weight:700;margin-left:auto;color:var(--accent);}
+.restart-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:13px 34px;font-size:.97em;font-weight:700;border-radius:25px;cursor:pointer;font-family:inherit;transition:all .22s;box-shadow:0 5px 16px rgba(79,70,229,.35);margin-top:8px;}
+.restart-btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(79,70,229,.45);}
+.overlay{position:fixed;inset:0;background:var(--ov);backdrop-filter:blur(5px);z-index:300;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .25s;}
+.overlay.active{opacity:1;pointer-events:all;}
+.popup{background:var(--surface);border:1px solid var(--border);border-radius:20px;width:100%;max-width:400px;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);transform:scale(.93);transition:transform .25s;}
+.overlay.active .popup{transform:scale(1);}
+.popup-header{display:flex;align-items:center;gap:10px;padding:16px 16px 0;position:sticky;top:0;background:var(--surface);z-index:1;border-radius:20px 20px 0 0;}
+.popup-back{width:30px;height:30px;border-radius:8px;border:none;background:var(--surface2);color:var(--text);font-size:.9em;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;flex-shrink:0;}
+.popup-back:hover{background:var(--accent-light);}
+.popup-title{font-size:1em;font-weight:700;color:var(--text);flex:1;}
+.popup-body{padding:12px 16px 16px;}
+.s-list{display:flex;flex-direction:column;gap:7px;}
+.s-item{display:flex;align-items:center;gap:11px;padding:12px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:11px;cursor:pointer;transition:all .2s;color:var(--text);font-size:.94em;font-weight:500;}
+.s-item:hover{border-color:var(--accent);background:var(--accent-light);}
+.s-icon{font-size:1.15em;width:26px;text-align:center;}
+.s-arrow{margin-left:auto;color:var(--text2);}
+.t-list{display:flex;flex-direction:column;gap:8px;}
+.t-item{display:flex;align-items:center;gap:11px;padding:12px 13px;background:var(--surface2);border:2px solid var(--border);border-radius:11px;cursor:pointer;transition:all .2s;color:var(--text);font-size:.94em;font-weight:600;}
+.t-item:hover{border-color:var(--accent);}
+.t-item.active{border-color:var(--accent);background:var(--accent-light);}
+.t-dot{width:32px;height:32px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;}
+.t-dot.light{background:linear-gradient(135deg,#f0f4ff,#fff);}
+.t-dot.dark{background:linear-gradient(135deg,#0f0f1a,#1a1a2e);}
+.t-check{margin-left:auto;font-size:1em;color:var(--accent);display:none;}
+.t-item.active .t-check{display:block;}
+.now-playing{background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:13px;padding:15px;color:#fff;margin-bottom:13px;display:flex;align-items:center;gap:11px;}
+.album-art{width:50px;height:50px;border-radius:10px;background:rgba(255,255,255,.22);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.5em;overflow:hidden;}
+.album-art.playing .vinyl{animation:spin 3s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.track-name-wrap{overflow:hidden;white-space:nowrap;position:relative;}
+.track-name{font-weight:700;font-size:.88em;display:inline-block;white-space:nowrap;padding-right:30px;}
+.track-name.marquee{animation:marquee 14s linear infinite;}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.track-artist{font-size:.74em;opacity:.8;margin-top:2px;}
+.seek-row{display:flex;align-items:center;gap:8px;margin-bottom:11px;font-size:.74em;color:var(--text2);}
+.stime{min-width:30px;text-align:center;font-variant-numeric:tabular-nums;}
+input[type=range].rng{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;outline:none;cursor:pointer;border:none;transition:background .05s;}
+input[type=range].rng::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--accent);border:2px solid #fff;box-shadow:0 1px 5px rgba(79,70,229,.4);cursor:pointer;transition:transform .15s;}
+input[type=range].rng::-webkit-slider-thumb:active{transform:scale(1.25);}
+input[type=range].rng::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:var(--accent);border:2px solid #fff;cursor:pointer;}
+input[type=range].vrng::-webkit-slider-thumb{background:var(--accent2);}
+input[type=range].vrng::-moz-range-thumb{background:var(--accent2);}
+.vol-row{display:flex;align-items:center;gap:8px;margin-bottom:13px;}
+.vol-icon{font-size:.95em;color:var(--text2);min-width:20px;text-align:center;}
+.vol-lbl{font-size:.74em;color:var(--text2);min-width:22px;text-align:right;}
+.play-row{display:flex;justify-content:center;gap:11px;align-items:center;}
+.pbtn{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;font-size:1.15em;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(79,70,229,.35);}
+.pbtn:hover{transform:scale(1.08);}
+.sbtn{width:34px;height:34px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:.9em;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;}
+.sbtn:hover{background:var(--accent-light);border-color:var(--accent);}
+.tl{margin-top:13px;display:flex;flex-direction:column;gap:5px;}
+.tl-item{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--surface2);border:1.5px solid var(--border);border-radius:9px;cursor:pointer;transition:all .2s;font-size:.86em;font-weight:500;color:var(--text);}
+.tl-item:hover{border-color:var(--accent);background:var(--accent-light);}
+.tl-item.active{border-color:var(--accent);background:var(--accent-light);}
+.tl-num{width:20px;height:20px;border-radius:5px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:.75em;font-weight:700;flex-shrink:0;color:var(--text2);}
+.tl-item.active .tl-num{background:var(--accent);color:#fff;}
+.tl-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tl-eq{font-size:.75em;color:var(--accent);animation:blink 1s ease infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.mini-player{position:fixed;bottom:22px;right:18px;background:var(--surface);border:1px solid var(--border);border-radius:50px;padding:6px 13px 6px 7px;display:flex;align-items:center;gap:8px;box-shadow:var(--sh);cursor:pointer;z-index:200;transition:all .2s;max-width:200px;}
+.mini-player:hover{transform:translateY(-2px);}
+.mini-icon{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:.8em;color:#fff;flex-shrink:0;}
+.mini-icon.playing{animation:pRing 1.5s ease infinite;}
+@keyframes pRing{0%,100%{box-shadow:0 0 0 0 rgba(79,70,229,.5)}50%{box-shadow:0 0 0 5px rgba(79,70,229,0)}}
+.mini-text{font-size:.71em;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;}
+body.fullscreen-mode .topbar{display:none;}
+body.fullscreen-mode .main{padding-top:10px;max-width:100%;}
+body.fullscreen-mode .quiz-header{display:none;}
+body.fullscreen-mode .stats-row{display:none;}
+body.fullscreen-mode .q-card{padding:30px;}
+body.fullscreen-mode .q-text{font-size:1.9em;}
+body.fullscreen-mode .options{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+body.fullscreen-mode .option{font-size:1.45em;padding:24px 16px;justify-content:center;}
+body.fullscreen-mode .options .option:nth-child(1){background:linear-gradient(135deg,#FFD93D,#FFA500);border-color:#FF8C00;}
+body.fullscreen-mode .options .option:nth-child(2){background:linear-gradient(135deg,#F9ED69,#F08A5D);border-color:#E07B39;}
+body.fullscreen-mode .options .option:nth-child(3){background:linear-gradient(135deg,#6BCF7F,#4CAF50);border-color:#388E3C;}
+body.fullscreen-mode .options .option:nth-child(4){background:linear-gradient(135deg,#6DD5FA,#2980B9);border-color:#1F5F8B;}
+body.fullscreen-mode .options .option.correct{border-color:#00C851!important;border-width:5px!important;box-shadow:0 0 20px rgba(0,200,81,.7);}
+body.fullscreen-mode .options .option.wrong{border-color:#ff4444!important;opacity:.4;}
+body.fullscreen-mode .nav-btn{font-size:1.3em;padding:15px;}
+@media(max-width:480px){.quiz-header h1{font-size:1.3em;}.q-text{font-size:.97em;}.option{font-size:.88em;padding:10px 12px;}.mini-player{max-width:160px;}}
+@media(min-width:900px){.q-text{font-size:1.18em;}.option{font-size:1em;}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <span class="topbar-title">🎓 Trắc nghiệm Lịch sử</span>
+  <div class="topbar-right"><button class="icon-btn" id="settingsBtn">⚙️</button></div>
+</div>
+<div class="main">
+  <div class="quiz-header"><h1>🏛️ Văn Lang – Âu Lạc</h1><p>Kiểm tra kiến thức Lịch sử Việt Nam cổ đại</p></div>
+  <div id="statsRow" class="stats-row">
+    <div class="stat-card"><label>Câu hỏi</label><div class="val"><span id="currentQ">1</span>/<span id="totalQ">11</span></div></div>
+    <div class="stat-card"><label>Thời gian</label><div class="val" id="timer">00:00</div></div>
+  </div>
+  <div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" id="progress"></div></div></div>
+  <div id="quizArea"></div>
+</div>
+<button class="fullscreen-btn" id="fullscreenBtn">⛶</button>
+<div class="mini-player" id="miniPlayer"><div class="mini-icon" id="miniIcon">🎵</div><span class="mini-text" id="miniText">Đang tải...</span></div>
+
+<div class="overlay" id="ovSettings">
+  <div class="popup">
+    <div class="popup-header"><div class="popup-title">⚙️ Cài đặt</div><button class="popup-back" id="closeSettings">✕</button></div>
+    <div class="popup-body"><div class="s-list">
+      <div class="s-item" id="openTheme"><span class="s-icon">🎨</span><span>Chủ đề giao diện</span><span class="s-arrow">›</span></div>
+      <div class="s-item" id="openMusic"><span class="s-icon">🎵</span><span>Trình phát nhạc</span><span class="s-arrow">›</span></div>
+    </div></div>
+  </div>
+</div>
+
+<div class="overlay" id="ovTheme">
+  <div class="popup">
+    <div class="popup-header"><button class="popup-back" id="backTheme">←</button><div class="popup-title">🎨 Chủ đề giao diện</div></div>
+    <div class="popup-body"><div class="t-list">
+      <div class="t-item active" data-theme="light"><div class="t-dot light"></div><div><div style="font-weight:700">Sáng</div><div style="font-size:.78em;color:var(--text2)">Nền trắng sạch sẽ</div></div><span class="t-check">✓</span></div>
+      <div class="t-item" data-theme="dark"><div class="t-dot dark"></div><div><div style="font-weight:700">Tối</div><div style="font-size:.78em;color:var(--text2)">Nền tối dễ nhìn</div></div><span class="t-check">✓</span></div>
+    </div></div>
+  </div>
+</div>
+
+<div class="overlay" id="ovMusic">
+  <div class="popup">
+    <div class="popup-header"><button class="popup-back" id="backMusic">←</button><div class="popup-title">🎵 Trình phát nhạc</div></div>
+    <div class="popup-body">
+      <div class="now-playing">
+        <div class="album-art" id="albumArt"><span class="vinyl">💿</span></div>
+        <div class="track-info" style="flex:1;min-width:0">
+          <div class="track-name-wrap"><span class="track-name" id="trackName">–</span></div>
+          <div class="track-artist" id="trackArtist">Đang tải...</div>
+        </div>
+      </div>
+      <div class="seek-row">
+        <span class="stime" id="curTime">0:00</span>
+        <input type="range" class="rng" id="seekBar" min="0" max="10000" value="0" step="1">
+        <span class="stime" id="durTime">0:00</span>
+      </div>
+      <div class="vol-row">
+        <span class="vol-icon" id="volIcon">🔉</span>
+        <input type="range" class="rng vrng" id="volBar" min="0" max="100" value="15" step="1">
+        <span class="vol-lbl" id="volLbl">15</span>
+      </div>
+      <div class="play-row">
+        <button class="sbtn" id="btnPrev">⏮</button>
+        <button class="pbtn" id="btnPlay">▶</button>
+        <button class="sbtn" id="btnNext">⏭</button>
+        <button class="sbtn" id="btnMute">🔇</button>
+      </div>
+      <div style="font-size:.75em;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin:12px 0 7px">Danh sách phát</div>
+      <div class="tl" id="trackList"></div>
+    </div>
+  </div>
+</div>
+
+<audio id="audioEl" preload="auto"></audio>
+<script>
+// ── QUIZ ──────────────────────────────────────
+const questions=[
+  {id:1,q:"Nhà nước đầu tiên được hình thành trên lãnh thổ Việt Nam có tên gọi là",o:["Văn Lang","Lâm Ấp","Chăm-pa","Phù Nam"],c:0},
+  {id:2,q:"Nền văn minh Văn Lang – Âu Lạc được hình thành ở khu vực nào sau đây của Việt Nam?",o:["Khu vực Bắc Bộ và Bắc Trung Bộ Việt Nam ngày nay","Vùng duyên hải và cao nguyên miền Trung Việt Nam","Lưu vực sông Hồng, sông Thu Bồn và sông Cửu Long","Vùng ven biển Nam Trung Bộ và Nam Bộ Việt Nam"],c:0},
+  {id:3,q:"Văn minh Văn Lang – Âu Lạc được hình thành trên cơ sở của nền văn hóa nào sau đây?",o:["Sa Huỳnh","Óc Eo","Đông Sơn","Sơn Vi"],c:2},
+  {id:4,q:"Kinh đô của nhà nước Văn Lang đặt tại",o:["Cổ Loa (Hà Nội)","Phong Châu (Phú Thọ)","Phú Xuân (Huế)","Quy Nhơn (Bình Định)"],c:1},
+  {id:5,q:"Nhà nước nào sau đây là sự kế thừa và phát triển của nhà nước Văn Lang?",o:["Âu Lạc","Lâm Ấp","Chăm-pa","Phù Nam"],c:0},
+  {id:6,q:"Một trong những biểu hiện chứng tỏ bước phát triển của nước Âu Lạc so với quốc gia Văn Lang là",o:["Bộ máy nhà nước được tổ chức hoàn thiện hơn so với thời kì trước","Lãnh thổ được mở rộng hơn trên cơ sở thống nhất Âu Việt và Lạc Việt","Cải cách đơn vị hành chính theo hướng tập trung, thống nhất, quan liêu","Bảo vệ vững chắc độc lập dân tộc trước sự xâm lược của quân Nam Hán"],c:1},
+  {id:7,q:"Nội dung nào sau đây phản ánh đúng đặc điểm của bộ máy nhà nước Văn Lang – Âu Lạc?",o:["Hoàn chỉnh, chặt chẽ","Đơn giản, sơ khai","Quan liêu, tập quyền","Phân quyền, pháp trị"],c:1},
+  {id:8,q:"Một trong những công trình kiến trúc tiêu biểu được xây dựng dưới thời kì nhà nước Âu Lạc là",o:["Chùa Một Cột","Tháp Phổ Minh","Thành Cổ Loa","Kinh thành Huế"],c:2},
+  {id:9,q:"Nội dung nào sau đây không phản ánh đúng đời sống vật chất của cư dân Văn Lang – Âu Lạc?",o:["Nguồn lương thực, thực phẩm phong phú, đa dạng","Tin ngưỡng sùng bái các lực lượng tự nhiên phổ biến","Đi lại chủ yếu bằng đường thủy thông qua thuyền, bè","Nhà ở chủ yếu là kiểu nhà sàn làm bằng gỗ, tre, nứa, lá"],c:1},
+  {id:10,q:"Tục thờ thần Mặt Trời là biểu hiện của tín ngưỡng nào sau đây của cư dân Văn Lang – Âu Lạc?",o:["Thờ cúng tổ tiên","Tin ngưỡng phồn thực","Sùng bái tự nhiên","Thờ thần động vật"],c:2},
+  {id:11,q:"Một trong những nét độc đáo trong đời sống tinh thần của cư dân Văn Lang – Âu Lạc là",o:["Chữ viết thể hiện tính bác học, uyên thâm","Sùng bái núi thiêng và nàng công chúa rắn","Hình thành tục thờ Mẫu và thờ cúng tổ tiên","Tục lệ chôn người chết trong các mộ chum"],c:2}
+];
+let cq=0,startT=Date.now(),timerIv,qStartT=Date.now(),tpq=[],ua={},sq=[];
+function initQ(){sq=questions.map(q=>{const i=[0,1,2,3];for(let x=i.length-1;x>0;x--){const j=Math.floor(Math.random()*(x+1));[i[x],i[j]]=[i[j],i[x]];}return{...q,o:i.map(k=>q.o[k]),c:i.indexOf(q.c)};});}
+function startTimer(){timerIv=setInterval(()=>{const e=Math.floor((Date.now()-startT)/1000);document.getElementById('timer').textContent=S2(Math.floor(e/60))+':'+S2(e%60);},1000);}
+function S2(n){return String(n).padStart(2,'0');}
+function dispQ(){
+  const q=sq[cq],a=ua[cq];
+  document.getElementById('currentQ').textContent=cq+1;
+  document.getElementById('totalQ').textContent=questions.length;
+  document.getElementById('progress').style.width=(cq/questions.length*100)+'%';
+  let oh='';
+  for(let i=0;i<q.o.length;i++){
+    let cl='option',ck=true;
+    if(a){if(i===q.c)cl+=' correct';if(a.w&&a.w.includes(i))cl+=' wrong';if(a.ans!==undefined){cl+=' disabled';ck=false;}}
+    oh+=`<div class="${cl}" ${ck?'onclick="chkA('+i+')"':''}><span class="opt-letter">${String.fromCharCode(65+i)}</span><span class="opt-text">${q.o[i]}</span></div>`;
+  }
+  const done=a&&a.ans!==undefined;
+  document.getElementById('quizArea').innerHTML=`<div class="q-card"><div class="q-label">Câu ${cq+1} / ${questions.length}</div><div class="q-text">${q.q}</div></div><div class="options">${oh}</div><div class="nav-row"><button class="nav-btn prev" onclick="prevQ()" ${cq===0?'disabled':''}>← Quay lại</button><button class="nav-btn next" onclick="nextQ()" ${!done?'disabled':''}>${cq===questions.length-1?'Kết thúc ✓':'Tiếp tục →'}</button></div>`;
+}
+function chkA(s){
+  const q=sq[cq],a=ua[cq]||{w:[]};
+  if(a.ans!==undefined||a.w.includes(s))return;
+  const opts=document.querySelectorAll('.option');
+  if(s===q.c){opts[s].classList.add('correct');tpq[cq]=Math.floor((Date.now()-qStartT)/1000);ua[cq]={...a,ans:s};opts.forEach(o=>o.classList.add('disabled'));document.querySelector('.nav-btn.next').disabled=false;}
+  else{opts[s].classList.add('wrong');a.w.push(s);ua[cq]=a;opts[s].style.pointerEvents='none';}
+}
+function prevQ(){if(cq>0){cq--;dispQ();}}
+function nextQ(){if(cq<questions.length-1){cq++;qStartT=Date.now();dispQ();}else showRes();}
+function showRes(){
+  clearInterval(timerIv);const t=Math.floor((Date.now()-startT)/1000),m=Math.floor(t/60),s=t%60;
+  const v=tpq.filter(x=>x!==undefined);const avg=v.length?Math.floor(v.reduce((a,b)=>a+b,0)/v.length):0;
+  document.getElementById('statsRow').style.display='none';document.querySelector('.progress-wrap').style.display='none';
+  document.getElementById('quizArea').innerHTML=`<div class="result-screen"><span class="trophy-anim">🏆</span><h2 style="font-size:1.6em;font-weight:800;margin-bottom:5px">Chúc mừng!</h2><p style="color:var(--text2);margin-bottom:14px">Bạn đã hoàn thành bài trắc nghiệm</p><div class="result-card"><div style="font-weight:700;color:var(--accent);margin-bottom:10px">📊 Thống kê chi tiết</div><div class="result-grid"><div class="result-item">⏱️ Tổng thời gian <span>${m} phút ${s} giây</span></div><div class="result-item">📈 TB/câu <span>${avg}s</span></div><div class="result-item">⚡ Nhanh nhất <span>${v.length?Math.min(...v):0}s</span></div><div class="result-item">🐢 Chậm nhất <span>${v.length?Math.max(...v):0}s</span></div><div class="result-item">✅ Tổng câu <span>${questions.length}</span></div></div></div><button class="restart-btn" onclick="location.reload()">🔄 Làm lại</button></div>`;
+}
+document.getElementById('fullscreenBtn').addEventListener('click',()=>{if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen&&document.exitFullscreen();});
+document.addEventListener('fullscreenchange',()=>{const fs=!!document.fullscreenElement;document.body.classList.toggle('fullscreen-mode',fs);document.getElementById('statsRow').style.display=fs?'none':'flex';});
+
+// ── OVERLAYS ──────────────────────────────────
+const ov=id=>document.getElementById(id);
+function openOv(id){ov(id).classList.add('active');}
+function closeOv(id){ov(id).classList.remove('active');}
+document.getElementById('settingsBtn').onclick=()=>openOv('ovSettings');
+document.getElementById('closeSettings').onclick=()=>closeOv('ovSettings');
+document.getElementById('openTheme').onclick=()=>{closeOv('ovSettings');openOv('ovTheme');};
+document.getElementById('openMusic').onclick=()=>{closeOv('ovSettings');openOv('ovMusic');};
+document.getElementById('backTheme').onclick=()=>{closeOv('ovTheme');openOv('ovSettings');};
+document.getElementById('backMusic').onclick=()=>{closeOv('ovMusic');openOv('ovSettings');};
+document.getElementById('miniPlayer').onclick=()=>openOv('ovMusic');
+['ovSettings','ovTheme','ovMusic'].forEach(id=>{ov(id).addEventListener('click',function(e){if(e.target===this)closeOv(id);});});
+
+// ── THEME ─────────────────────────────────────
+let theme=localStorage.getItem('theme')||'light';
+function applyTheme(t){theme=t;document.documentElement.setAttribute('data-theme',t);localStorage.setItem('theme',t);document.querySelectorAll('.t-item').forEach(el=>el.classList.toggle('active',el.dataset.theme===t));refreshRanges();}
+applyTheme(theme);
+document.querySelectorAll('.t-item').forEach(el=>el.onclick=()=>applyTheme(el.dataset.theme));
+
+// ── AUDIO PLAYER ──────────────────────────────
+const playlist=[
+  {title:"Phép Màu Lofi Ver (Đàn Cá Gỗ OST) - MAYDAYs ft. Minh Tốc [ KAZE Remix ]",artist:"MAYDAYs ft. Minh Tốc · KAZE Remix",url:"https://github.com/tru897tr/Soundhosting/raw/refs/heads/main/Ph%C3%A9p%20M%C3%A0u%20Lofi%20Ver%20(%C4%90%C3%A0n%20C%C3%A1%20G%E1%BB%97%20OST)%20-%20MAYDAYs%20ft.%20Minh%20T%E1%BB%91c%20%5B%20KAZE%20Remix%20%5D.mp3"},
+  {title:"puppy & @Dangrangto - Wrong Times (Shrimp remix)",artist:"puppy · Dangrangto · Shrimp remix",url:"https://github.com/tru897tr/Soundhosting/raw/refs/heads/main/puppy%20&%20%40Dangrangto%20-%20Wrong%20Times%20(Shrimp%20remix%20).mp3"},
+  {title:"Bạn Đời - KARIK",artist:"KARIK",url:"https://github.com/tru897tr/Soundhosting/raw/refs/heads/main/B%E1%BA%A1n%20%C4%90%E1%BB%9Di.mp3"}
+];
+const audio=document.getElementById('audioEl');
+let tidx=0,playing=false,muted=false,vol=15;
+// Seek: 0-10000 for high precision
+const seekBar=document.getElementById('seekBar');
+const volBar=document.getElementById('volBar');
+let seekActive=false; // true while user holds pointer on seekBar
+
+function fmt(s){s=Math.max(0,Math.floor(s));return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60);}
+
+// ── range fill helper ─
+function fillRange(el,pct,isVol){
+  const cs=getComputedStyle(document.documentElement);
+  const c=isVol?cs.getPropertyValue('--accent2').trim():cs.getPropertyValue('--accent').trim();
+  const b=cs.getPropertyValue('--border').trim();
+  el.style.background=`linear-gradient(90deg,${c} ${pct}%,${b} ${pct}%)`;
+}
+function refreshRanges(){
+  const sp=audio.duration?audio.currentTime/audio.duration*100:0;
+  fillRange(seekBar,sp,false);
+  fillRange(volBar,muted?0:vol,true);
+}
+
+// ── load track ─
+function loadTrack(i,autoPlay){
+  tidx=((i%playlist.length)+playlist.length)%playlist.length;
+  const t=playlist[tidx];
+  audio.src=t.url;audio.volume=muted?0:vol/100;audio.load();
+  // name
+  const ne=document.getElementById('trackName');
+  // duplicate text for seamless marquee loop
+  const doubled=t.title+'   –   '+t.title;
+  ne.textContent=doubled;
+  ne.classList.toggle('marquee',t.title.length>28);
+  document.getElementById('trackArtist').textContent=t.artist;
+  document.getElementById('miniText').textContent=t.title;
+  seekBar.value=0;fillRange(seekBar,0,false);
+  document.getElementById('curTime').textContent='0:00';
+  document.getElementById('durTime').textContent='0:00';
+  buildTL();
+  if(autoPlay)tryPlay();
+}
+
+function tryPlay(){
+  const p=audio.play();
+  if(p!==undefined){p.then(()=>{playing=true;updPlay();}).catch(()=>{playing=false;updPlay();});}
+  else{playing=true;updPlay();}
+}
+function pauseAudio(){audio.pause();playing=false;updPlay();}
+
+function updPlay(){
+  document.getElementById('btnPlay').textContent=playing?'⏸':'▶';
+  document.getElementById('albumArt').classList.toggle('playing',playing);
+  document.getElementById('miniIcon').classList.toggle('playing',playing);
+  buildTL();
+}
+
+function buildTL(){
+  document.getElementById('trackList').innerHTML=playlist.map((t,i)=>`
+    <div class="tl-item${i===tidx?' active':''}" onclick="loadTrack(${i},true)">
+      <div class="tl-num">${i+1}</div>
+      <span class="tl-name">${t.title}</span>
+      <span class="tl-eq" style="display:${i===tidx&&playing?'inline':'none'}">♪</span>
+    </div>`).join('');
+}
+
+// ── audio events ─
+audio.addEventListener('timeupdate',()=>{
+  if(seekActive||!audio.duration)return;
+  const pct=audio.currentTime/audio.duration;
+  const v=Math.round(pct*10000);
+  // Only update DOM if changed enough to avoid constant reflows
+  if(Math.abs(parseInt(seekBar.value)-v)>5){
+    seekBar.value=v;
+    fillRange(seekBar,pct*100,false);
+  }
+  document.getElementById('curTime').textContent=fmt(audio.currentTime);
+});
+audio.addEventListener('durationchange',()=>{document.getElementById('durTime').textContent=fmt(audio.duration);});
+audio.addEventListener('ended',()=>{loadTrack(tidx+1,true);});
+audio.addEventListener('error',()=>{setTimeout(()=>{audio.load();if(playing)audio.play().catch(()=>{});},2000);});
+audio.addEventListener('play',()=>{playing=true;updPlay();});
+audio.addEventListener('pause',()=>{playing=false;updPlay();});
+
+// ── seek bar: pointer-based for reliability ─
+seekBar.addEventListener('pointerdown',e=>{seekActive=true;e.target.setPointerCapture(e.pointerId);});
+seekBar.addEventListener('pointermove',e=>{
+  if(!seekActive)return;
+  fillRange(seekBar,seekBar.value/100,false); // /10000*100 = /100
+  if(audio.duration)document.getElementById('curTime').textContent=fmt(seekBar.value/10000*audio.duration);
+});
+seekBar.addEventListener('pointerup',e=>{
+  if(!seekActive)return;
+  seekActive=false;
+  if(audio.duration){audio.currentTime=seekBar.value/10000*audio.duration;}
+  fillRange(seekBar,seekBar.value/100,false);
+});
+seekBar.addEventListener('input',()=>{
+  // fallback for keyboard / no pointer capture
+  fillRange(seekBar,seekBar.value/100,false);
+  if(audio.duration)document.getElementById('curTime').textContent=fmt(seekBar.value/10000*audio.duration);
+});
+
+// ── volume bar ─
+let volActive=false;
+volBar.addEventListener('pointerdown',e=>{volActive=true;e.target.setPointerCapture(e.pointerId);});
+volBar.addEventListener('pointerup',()=>{volActive=false;});
+volBar.addEventListener('input',()=>{
+  vol=parseInt(volBar.value);
+  document.getElementById('volLbl').textContent=vol;
+  fillRange(volBar,vol,true);
+  document.getElementById('volIcon').textContent=vol===0?'🔇':vol<50?'🔉':'🔊';
+  muted=false;audio.volume=vol/100;
+  document.getElementById('btnMute').textContent='🔇';
+});
+volBar.value=vol;fillRange(volBar,vol,true);
+document.getElementById('volLbl').textContent=vol;
+
+// ── buttons ─
+document.getElementById('btnPlay').onclick=()=>{if(playing)pauseAudio();else tryPlay();};
+document.getElementById('btnPrev').onclick=()=>{loadTrack(tidx-1,playing);};
+document.getElementById('btnNext').onclick=()=>{loadTrack(tidx+1,playing);};
+document.getElementById('btnMute').onclick=()=>{
+  muted=!muted;audio.volume=muted?0:vol/100;
+  document.getElementById('btnMute').textContent=muted?'🔊':'🔇';
+  document.getElementById('volIcon').textContent=muted?'🔇':(vol<50?'🔉':'🔊');
+  fillRange(volBar,muted?0:vol,true);
+};
+
+// ── INIT ─
+window.addEventListener('DOMContentLoaded',()=>{
+  initQ();dispQ();startTimer();
+  loadTrack(0,false);
+  // Attempt autoplay
+  audio.volume=vol/100;
+  audio.play().then(()=>{playing=true;updPlay();}).catch(()=>{playing=false;updPlay();});
+});
+</script>
+</body>
+</html>
